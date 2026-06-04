@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Open Partition Manager - Main Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-container": "#beeecb",
+              "primary-container": "#418251",
+              "surface-container-high": "#d3efd7",
+              surface: "#e9ffeb",
+              "on-background": "#082011",
+              secondary: "#3d674c",
+              primary: "#27683a",
+              "on-secondary-fixed": "#002110",
+              tertiary: "#0e6a38",
+              "on-tertiary-fixed": "#00210d",
+              "on-surface": "#082011",
+              "on-tertiary": "#ffffff",
+              error: "#ba1a1a",
+              "on-secondary-container": "#436d52",
+              "surface-variant": "#cdead1",
+              "on-primary-fixed-variant": "#0a5226",
+              "secondary-fixed-dim": "#a3d1b0",
+              "surface-bright": "#e9ffeb",
+              "on-primary-container": "#f7fff3",
+              "surface-container-low": "#defbe2",
+              "secondary-fixed": "#beeecb",
+              "outline-variant": "#c1c6d5",
+              "surface-container-highest": "#cdead1",
+              "on-surface-variant": "#414753",
+              "surface-tint": "#296b3c",
+              "surface-container-lowest": "#ffffff",
+              "error-container": "#ffdad6",
+              background: "#e9ffeb",
+              "tertiary-container": "#31844e",
+              "on-secondary": "#ffffff",
+              "on-error-container": "#93000a",
+              "primary-fixed-dim": "#92d69d",
+              "on-primary-fixed": "#00210b",
+              "surface-dim": "#c5e1c9",
+              "on-tertiary-fixed-variant": "#005228",
+              "inverse-on-surface": "#dbf8df",
+              "on-error": "#ffffff",
+              "tertiary-fixed": "#a1f5b5",
+              "primary-fixed": "#adf3b8",
+              "on-primary": "#ffffff",
+              "inverse-primary": "#92d69d",
+              "inverse-surface": "#1e3525",
+              "on-secondary-fixed-variant": "#254f36",
+              "tertiary-fixed-dim": "#85d89b",
+              "surface-container": "#d8f5dc",
+              "on-tertiary-container": "#f6fff4",
+              outline: "#717785"
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px"
+            },
+            spacing: {
+              md: "16px",
+              xl: "32px",
+              xs: "4px",
+              lg: "24px",
+              gutter: "16px",
+              "margin-mobile": "16px",
+              base: "8px",
+              sm: "8px",
+              "margin-desktop": "32px",
+              "container-padding": "16px",
+              "toolbar-height": "56px",
+              "pane-gap": "1px",
+              "table-cell-padding": "12px 16px",
+              unit: "4px"
+            },
+            fontFamily: {
+              "headline-lg": ["Space Grotesk"],
+              "headline-md": ["Space Grotesk"],
+              "label-md": ["Space Grotesk"],
+              "headline-lg-mobile": ["Space Grotesk"],
+              "body-md": ["Instrument Sans"],
+              "table-header": ["Space Grotesk"],
+              "body-sm": ["Instrument Sans"],
+              "label-mono": ["JetBrains Mono"]
+            },
+            fontSize: {
+              "headline-lg": [
+                "32px",
+                {
+                  lineHeight: "40px",
+                  fontWeight: "700"
+                }
+              ],
+              "headline-md": [
+                "24px",
+                {
+                  lineHeight: "32px",
+                  fontWeight: "600"
+                }
+              ],
+              "label-md": [
+                "14px",
+                {
+                  lineHeight: "20px",
+                  fontWeight: "500"
+                }
+              ],
+              "headline-lg-mobile": [
+                "28px",
+                {
+                  lineHeight: "36px",
+                  fontWeight: "700"
+                }
+              ],
+              "body-md": [
+                "16px",
+                {
+                  lineHeight: "24px",
+                  fontWeight: "400"
+                }
+              ],
+              "table-header": [
+                "12px",
+                { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "600" }
+              ],
+              "body-sm": [
+                "14px",
+                { lineHeight: "20px", fontWeight: "400" }
+              ],
+              "label-mono": [
+                "13px",
+                { lineHeight: "20px", fontWeight: "500" }
+              ]
+            }
+          }
+        }
+      };
+    </script>
+    <style>
+      .appearance-none {
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        background-image: none !important;
+      }
+
+      .stripes-bg {
+        background-image: repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 10px,
+          rgba(0, 0, 0, 0.05) 10px,
+          rgba(0, 0, 0, 0.05) 20px
+        );
+      }
+
+      .ambient-bg {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 10% 20%, rgba(173, 243, 184, 0.45), transparent 45%),
+          radial-gradient(circle at 85% 15%, rgba(49, 132, 78, 0.25), transparent 40%),
+          radial-gradient(circle at 30% 80%, rgba(146, 214, 157, 0.35), transparent 50%),
+          linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(233, 255, 235, 0.6));
+        opacity: 0.9;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      .disk-map {
+        display: flex;
+        gap: 6px;
+        align-items: stretch;
+        height: 64px;
+        padding: 6px;
+        border-radius: 16px;
+        border: 1px solid #c1c6d5;
+        background: #d8f5dc;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.65);
+      }
+
+      .partition-block {
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+        transition: transform 120ms ease, box-shadow 160ms ease, filter 160ms ease;
+        cursor: grab;
+        overflow: hidden;
+        user-select: none;
+        touch-action: none;
+      }
+
+      .partition-block.is-selected {
+        transform: scaleX(1.04);
+        border: 2px solid #0f5c2c;
+        outline: 2px solid rgba(39, 104, 58, 0.3);
+        outline-offset: 2px;
+        filter: brightness(1.08) saturate(1.12);
+        box-shadow: 0 12px 22px rgba(39, 104, 58, 0.2);
+        z-index: 2;
+      }
+
+      .partition-block.is-unallocated.is-selected {
+        transform: none !important;
+        border: 1px solid rgba(255, 255, 255, 0.6) !important;
+        outline: none !important;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05) !important;
+        filter: none !important;
+        z-index: 1 !important;
+      }
+
+      .partition-block:hover {
+        filter: brightness(1.05);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      }
+
+      .partition-block.is-dragging {
+        opacity: 0.7;
+        transform: scale(0.98);
+      }
+
+      .partition-block.is-unallocated {
+        color: #414753;
+      }
+
+      .tone-primary {
+        background: #27683a;
+        color: #ffffff;
+      }
+
+      .tone-secondary {
+        background: #3d674c;
+        color: #ffffff;
+      }
+
+      .tone-tertiary {
+        background: #0e6a38;
+        color: #ffffff;
+      }
+
+      .tone-primary-container {
+        background: #418251;
+        color: #f7fff3;
+      }
+
+      .tone-surface {
+        background: #cdead1;
+        color: #414753;
+      }
+
+      .partition-label {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+      }
+
+      .label-title {
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .label-sub {
+        font-size: 11px;
+        opacity: 0.85;
+        white-space: nowrap;
+      }
+
+      .resize-handle {
+        position: absolute;
+        top: 8px;
+        bottom: 8px;
+        width: 8px;
+        border-radius: 9999px;
+        background: rgba(255, 255, 255, 0.6);
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+        opacity: 0;
+        transition: opacity 140ms ease;
+        cursor: col-resize;
+      }
+
+      .partition-block:hover .resize-handle {
+        opacity: 0.9;
+      }
+
+      .resize-handle.left {
+        left: -4px;
+      }
+
+      .resize-handle.right {
+        right: -4px;
+      }
+
+      .rounded-left {
+        border-top-left-radius: 14px;
+        border-bottom-left-radius: 14px;
+      }
+
+      .rounded-right {
+        border-top-right-radius: 14px;
+        border-bottom-right-radius: 14px;
+      }
+
+      .table-row {
+        background: #ffffff;
+        transition: background 120ms ease;
+        border-bottom: 1px solid #d8f5dc;
+      }
+
+      .table-row:hover {
+        background: #e9ffeb;
+      }
+
+      .table-row.is-selected {
+        background: #dcf7e0;
+        outline: 2px solid rgba(39, 104, 58, 0.35);
+        outline-offset: -2px;
+      }
+
+      body.is-resizing {
+        cursor: col-resize;
+      }
+
+      body.is-dragging {
+        cursor: grabbing;
+      }
+
+      .modal {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(10, 25, 15, 0.35);
+        backdrop-filter: blur(6px);
+        z-index: 60;
+      }
+
+      .modal.hidden {
+        display: none;
+      }
+
+      .modal-panel {
+        width: min(520px, 92vw);
+        background: #ffffff;
+        border-radius: 18px;
+        border: 1px solid #c1c6d5;
+        padding: 20px;
+        box-shadow: 0 28px 60px rgba(8, 32, 17, 0.22);
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .icon-button {
+        width: 32px;
+        height: 32px;
+        border-radius: 9999px;
+        border: 1px solid #c1c6d5;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #ffffff;
+        color: #414753;
+      }
+
+      .resize-grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .resize-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #414753;
+      }
+
+      .resize-range {
+        width: 100%;
+        accent-color: #27683a;
+      }
+
+      .resize-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #082011;
+        font-weight: 600;
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .startup-loading {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(233, 255, 235, 0.92);
+        z-index: 80;
+      }
+
+      .startup-loading.hidden {
+        display: none;
+      }
+
+      .startup-card {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 22px;
+        border-radius: 14px;
+        border: 1px solid #c1c6d5;
+        background: #ffffff;
+        box-shadow: 0 18px 40px rgba(8, 32, 17, 0.18);
+        color: #082011;
+      }
+
+      .startup-spinner {
+        width: 22px;
+        height: 22px;
+        border-radius: 9999px;
+        border: 3px solid #d8f5dc;
+        border-top-color: #27683a;
+        animation: spin 0.8s linear infinite;
+      }
+
+      .startup-title {
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .startup-subtitle {
+        font-size: 12px;
+        color: #414753;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 10px;
+        border-radius: 9999px;
+        background: #d8f5dc;
+        overflow: hidden;
+        border: 1px solid #c1c6d5;
+      }
+
+      .progress-fill {
+        height: 100%;
+        width: 0%;
+        background: #27683a;
+        transition: width 160ms linear;
+      }
+
+      .progress-fill.is-animating {
+        background: linear-gradient(90deg, #27683a 0%, #3fa15a 50%, #27683a 100%);
+        background-size: 200% 100%;
+        animation: progress-shift 1.2s linear infinite;
+      }
+
+      .progress-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #414753;
+        font-weight: 600;
+      }
+
+      .apply-log {
+        max-height: 220px;
+        overflow-y: auto;
+        border: 1px solid #c1c6d5;
+        border-radius: 12px;
+        padding: 10px;
+        background: #f7fff3;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 12px;
+      }
+
+      .info-body {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        font-size: 13px;
+        color: #414753;
+      }
+
+      .info-line {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid #c1c6d5;
+        background: #f7fff3;
+        line-height: 1.4;
+      }
+
+      .info-line .bullet {
+        width: 6px;
+        height: 6px;
+        margin-top: 6px;
+        border-radius: 9999px;
+        background: #27683a;
+        flex: 0 0 auto;
+      }
+
+      button.is-loading {
+        position: relative;
+        color: transparent !important;
+        pointer-events: none;
+      }
+
+      button.is-loading .material-symbols-outlined {
+        color: transparent !important;
+      }
+
+      button.is-loading::after {
+        content: "";
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        border-radius: 9999px;
+        border: 2px solid #c1c6d5;
+        border-top-color: #27683a;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      @keyframes progress-shift {
+        from { background-position: 0% 0; }
+        to { background-position: 200% 0; }
+      }
+
+      .btn-secondary {
+        background: #ffffff;
+        border: 1px solid #c1c6d5;
+        color: #082011;
+        padding: 8px 14px;
+        border-radius: 10px;
+        font-weight: 600;
+      }
+
+      .btn-primary {
+        background: #27683a;
+        border: 1px solid #27683a;
+        color: #ffffff;
+        padding: 8px 14px;
+        border-radius: 10px;
+        font-weight: 600;
+      }
+
+      .btn-primary:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      #queue-list::-webkit-scrollbar {
+        width: 6px;
+      }
+      #queue-list::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      #queue-list::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 3px;
+      }
+      #queue-list::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.3);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background text-on-background font-body-md text-body-md h-screen w-screen overflow-hidden flex flex-col antialiased selection:bg-primary-fixed selection:text-on-primary-fixed relative"
+  >
+    <div aria-hidden="true" class="ambient-bg"></div>
+    <div id="startup-loading" class="startup-loading" aria-live="polite">
+      <div class="startup-card">
+        <div class="startup-spinner"></div>
+        <div>
+          <div class="startup-title">Loading disks...</div>
+          <div class="startup-subtitle">Fetching live state from the native backend.</div>
+        </div>
+      </div>
+    </div>
+    <!-- TopNavBar -->
+    <header
+      class="bg-surface border-b border-outline-variant flex justify-between items-center h-toolbar-height px-container-padding w-full shrink-0 z-20 shadow-[0_1px_2px_rgba(0,0,0,0.03)] relative"
+    >
+      <div class="flex items-center gap-6">
+        <div
+          class="font-headline-md text-headline-md text-primary flex items-center gap-2"
+        >
+          <span
+            class="material-symbols-outlined"
+            style="font-variation-settings: 'FILL' 1"
+            >dns</span
+          >
+          Open Partition Manager
+        </div>
+      </div>
+          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-1 mr-2 text-outline-variant">
+          <button id="settings-btn"
+            class="p-2 hover:bg-surface-container-high rounded-full transition-colors active:scale-95 duration-100 flex items-center justify-center text-on-surface-variant"
+          >
+            <span class="material-symbols-outlined text-[20px]">settings</span>
+          </button>
+          <button id="help-btn"
+            class="p-2 hover:bg-surface-container-high rounded-full transition-colors active:scale-95 duration-100 flex items-center justify-center text-on-surface-variant"
+          >
+            <span class="material-symbols-outlined text-[20px]">help</span>
+          </button>
+          <button id="info-btn"
+            class="p-2 hover:bg-surface-container-high rounded-full transition-colors active:scale-95 duration-100 flex items-center justify-center text-on-surface-variant"
+          >
+            <span class="material-symbols-outlined text-[20px]">info</span>
+          </button>
+        </div>
+        <button id="discard-changes"
+          class="bg-surface-container-lowest text-on-surface border border-outline-variant h-10 px-5 rounded-lg font-label-md text-label-md hover:bg-surface-container-high transition-colors active:scale-95 duration-100"
+        >
+          Discard
+        </button>
+        <button id="apply-changes"
+          class="bg-primary text-on-primary border border-primary h-10 px-5 rounded-lg font-label-md text-label-md hover:bg-surface-tint transition-colors active:scale-95 duration-100 flex items-center gap-2 shadow-sm"
+        >
+          <span class="material-symbols-outlined text-[18px]">check_circle</span>
+          Apply Changes
+        </button>
+      </div>
+    </header>
+    <!-- Main Workspace -->
+    <main
+      class="flex-1 flex flex-col xl:flex-row overflow-hidden w-full relative bg-surface-container-lowest z-10"
+    >
+      <!-- Center Content Area (Detail View) -->
+      <section
+        class="flex-1 flex flex-col overflow-hidden bg-surface-container-lowest min-w-0"
+      >
+        <!-- Page Header -->
+        <div
+          class="px-container-padding py-6 flex items-center justify-between border-b border-surface-container bg-surface"
+        >
+          <div class="flex items-center gap-4">
+            <div
+              class="w-12 h-12 rounded-xl bg-primary-fixed flex items-center justify-center text-on-primary-fixed"
+            >
+              <span
+                class="material-symbols-outlined text-2xl"
+                style="font-variation-settings: 'FILL' 1"
+                >hard_drive_2</span
+              >
+            </div>
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center gap-3">
+                <div class="relative flex items-center">
+                  <select id="disk-select" class="font-headline-md text-headline-md text-on-surface bg-transparent border-none outline-none cursor-pointer pr-8 hover:text-primary transition-colors duration-150 py-0.5 my-0 font-bold focus:ring-0 focus:outline-none appearance-none">
+                    <!-- Populated dynamically -->
+                  </select>
+                  <span class="material-symbols-outlined text-[20px] text-on-surface-variant absolute right-1 pointer-events-none">keyboard_arrow_down</span>
+                </div>
+                <span id="disk-style-badge" class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-mono text-[10px] font-bold bg-primary-container text-on-primary-container uppercase tracking-wide">
+                  GPT
+                </span>
+              </div>
+              <p
+                id="disk-subtitle"
+                class="font-body-md text-body-md text-on-surface-variant"
+              >
+                Loading...
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="refresh-btn" title="Refresh state" class="p-2 hover:bg-surface-container-high rounded-full transition-colors active:scale-95 duration-100 flex items-center justify-center text-on-surface-variant">
+              <span class="material-symbols-outlined text-[18px]">refresh</span>
+            </button>
+            <button id="restore-btn" title="Restore last disk state" class="p-2 hover:bg-surface-container-high rounded-full transition-colors active:scale-95 duration-100 flex items-center justify-center text-on-surface-variant">
+              <span class="material-symbols-outlined text-[18px]">restore</span>
+            </button>
+            <span
+              id="disk-status"
+              class="inline-flex items-center px-2.5 py-1 rounded-md font-label-mono text-[11px] font-bold bg-secondary-container text-on-secondary-container uppercase tracking-wide"
+            >
+              Online
+            </span>
+            <span
+              id="disk-health"
+              class="inline-flex items-center px-2.5 py-1 rounded-md font-label-mono text-[11px] font-bold bg-surface-container-high text-on-surface-variant uppercase tracking-wide"
+            >
+              Healthy
+            </span>
+          </div>
+        </div>
+        <!-- Disk Map Visualizer -->
+        <div
+          class="p-container-padding pb-4 border-b border-surface-container bg-surface flex flex-col gap-4 shrink-0"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex flex-col gap-1">
+              <h3
+                class="font-table-header text-table-header text-on-surface-variant uppercase tracking-wider"
+              >
+                Partition Topology
+              </h3>
+              <p class="text-[12px] text-on-surface-variant">
+                Drag to reorder, click a partition to resize.
+              </p>
+            </div>
+            <div
+              class="flex gap-4 font-body-sm text-body-sm text-on-surface-variant"
+            >
+              <span class="flex items-center gap-1.5"
+                ><span class="w-3 h-3 rounded-sm bg-tertiary"></span> System</span
+              >
+              <span class="flex items-center gap-1.5"
+                ><span class="w-3 h-3 rounded-sm bg-primary"></span> Primary</span
+              >
+              <span class="flex items-center gap-1.5"
+                ><span class="w-3 h-3 rounded-sm bg-secondary"></span> Logical</span
+              >
+              <span class="flex items-center gap-1.5"
+                ><span
+                  class="w-3 h-3 rounded-sm border border-outline-variant stripes-bg"
+                ></span>
+                Unallocated</span
+              >
+            </div>
+          </div>
+          <div id="disk-map" class="disk-map"></div>
+        </div>
+        <!-- Action Toolbar -->
+        <div
+          class="px-container-padding py-3 bg-surface border-b border-outline-variant flex items-center gap-3 shrink-0"
+        >
+          <button id="action-new"
+            class="bg-surface-container-lowest text-on-surface border border-outline-variant h-9 px-4 rounded-md font-label-md hover:bg-surface-container-low transition-colors flex items-center gap-2"
+          >
+            <span class="material-symbols-outlined text-[18px]">add_box</span>
+            New
+          </button>
+          <div class="w-px h-5 bg-outline-variant mx-1"></div>
+          <button id="action-resize"
+            class="bg-surface-container-lowest text-on-surface border border-outline-variant h-9 px-4 rounded-md font-label-md hover:bg-surface-container-low transition-colors flex items-center gap-2 shadow-sm"
+          >
+            <span class="material-symbols-outlined text-[18px]">format_h3</span>
+            Move
+          </button>
+          <button id="action-delete"
+            class="bg-surface-container-lowest text-on-surface border border-outline-variant h-9 px-4 rounded-md font-label-md hover:bg-surface-container-low transition-colors flex items-center gap-2"
+          >
+            <span class="material-symbols-outlined text-[18px]">delete_forever</span>
+            Delete
+          </button>
+          <button id="action-format"
+            class="bg-surface-container-lowest text-on-surface border border-outline-variant h-9 px-4 rounded-md font-label-md hover:bg-surface-container-low transition-colors flex items-center gap-2"
+          >
+            <span class="material-symbols-outlined text-[18px]">delete</span>
+            Format
+          </button>
+          <div class="w-px h-5 bg-outline-variant mx-1"></div>
+          <button id="action-props"
+            class="bg-surface-container-lowest text-on-surface border border-outline-variant h-9 px-4 rounded-md font-label-md hover:bg-surface-container-low transition-colors flex items-center gap-2"
+          >
+            <span class="material-symbols-outlined text-[18px]">info</span>
+            Properties
+          </button>
+        </div>
+        <!-- Data Table -->
+        <div class="flex-1 overflow-auto bg-surface-container-lowest">
+          <table class="w-full text-left border-collapse min-w-[700px]">
+            <thead
+              class="sticky top-0 bg-surface z-10 shadow-[0_1px_0_var(--tw-shadow-color)] shadow-outline-variant"
+            >
+              <tr>
+                <th
+                  class="p-table-cell-padding font-table-header text-table-header text-on-surface-variant whitespace-nowrap w-[25%] uppercase"
+                >
+                  Volume Label
+                </th>
+                <th
+                  class="p-table-cell-padding font-table-header text-table-header text-on-surface-variant whitespace-nowrap w-[15%] uppercase"
+                >
+                  File System
+                </th>
+                <th
+                  class="p-table-cell-padding font-table-header text-table-header text-on-surface-variant whitespace-nowrap w-[15%] text-right uppercase"
+                >
+                  Capacity
+                </th>
+                <th
+                  class="p-table-cell-padding font-table-header text-table-header text-on-surface-variant whitespace-nowrap w-[30%] uppercase"
+                >
+                  Used Space
+                </th>
+                <th
+                  class="p-table-cell-padding font-table-header text-table-header text-on-surface-variant whitespace-nowrap w-[15%] uppercase"
+                >
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody id="partition-table" class="font-body-md text-body-md text-on-surface"></tbody>
+          </table>
+        </div>
+      </section>
+      <!-- Right Pane: Operations Queue -->
+      <aside
+        class="w-full xl:w-80 bg-surface border-l xl:border-l border-t xl:border-t-0 border-outline-variant shrink-0 flex flex-col z-10 shadow-[-1px_0_2px_rgba(0,0,0,0.02)] overflow-hidden"
+      >
+        <div
+          class="p-4 border-b border-outline-variant bg-surface-container-lowest flex items-center justify-between"
+        >
+          <h3 class="font-headline-md text-[16px] text-on-surface flex items-center gap-2">
+            <span class="material-symbols-outlined text-[20px] text-primary"
+              >pending_actions</span
+            >
+            Operations Queue
+          </h3>
+          <span
+            id="queue-count"
+            class="bg-primary text-on-primary text-[12px] font-bold px-2 py-0.5 rounded-full leading-none"
+            >0</span
+          >
+        </div>
+        <div
+          id="queue-list"
+          class="flex-1 overflow-y-auto p-4 flex flex-col gap-3 bg-surface-container-lowest relative"
+        >
+          <!-- Queue items are injected by app.js -->
+          <div
+            id="queue-empty"
+            class="hidden flex-col items-center justify-center text-outline-variant absolute inset-0"
+          >
+            <span class="material-symbols-outlined text-[32px] mb-2 opacity-50">task</span>
+            <p class="font-body-sm text-[12px] text-center">
+              No pending operations.<br />Make changes to the disk map.
+            </p>
+          </div>
+        </div>
+      </aside>
+    </main>
+    <div id="resize-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="resize-title">
+      <div class="modal-panel">
+        <div class="modal-header">
+          <div>
+            <h3 id="resize-title" class="font-headline-md text-[18px] text-on-surface">
+              Resize Partition
+            </h3>
+            <p class="text-[12px] text-on-surface-variant">
+              Adjust size using available unallocated space.
+            </p>
+          </div>
+          <button id="resize-close" class="icon-button" aria-label="Close resize dialog">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+
+        <div class="resize-grid">
+          <div class="resize-row">
+            <div class="resize-label">Extend Left</div>
+            <div class="resize-value">
+              <span id="resize-left-value" class="font-bold">0.00 GB</span>
+              <span id="resize-before" class="text-[11px] text-outline-variant ml-1">(available: -)</span>
+            </div>
+          </div>
+          <input id="resize-left" class="resize-range" type="range" min="0" max="0" step="0.001" value="0" />
+
+          <div class="resize-row">
+            <div class="resize-label">Extend Right</div>
+            <div class="resize-value">
+              <span id="resize-right-value" class="font-bold">0.00 GB</span>
+              <span id="resize-after" class="text-[11px] text-outline-variant ml-1">(available: -)</span>
+            </div>
+          </div>
+          <input id="resize-right" class="resize-range" type="range" min="0" max="0" step="0.001" value="0" />
+
+          <div class="resize-row">
+            <div class="resize-label">Shrink Left</div>
+            <div class="resize-value">
+              <span id="resize-shrink-left-value" class="font-bold">0.00 GB</span>
+            </div>
+          </div>
+          <input id="resize-shrink-left" class="resize-range" type="range" min="0" max="0" step="0.001" value="0" />
+
+          <div class="resize-row">
+            <div class="resize-label">Shrink Right</div>
+            <div class="resize-value">
+              <span id="resize-shrink-right-value" class="font-bold">0.00 GB</span>
+            </div>
+          </div>
+          <input id="resize-shrink-right" class="resize-range" type="range" min="0" max="0" step="0.001" value="0" />
+
+          <div class="resize-meta">
+            <div>Original size: <span id="resize-current">-</span></div>
+            <div>Minimum size: <span id="resize-min">-</span></div>
+            <div>New size: <span id="resize-new">-</span></div>
+          </div>
+          <div class="resize-meta" id="resize-changes">
+            <!-- Dynamically populated with Move/Resize changes -->
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="resize-cancel" class="btn-secondary">Cancel</button>
+          <button id="resize-apply" class="btn-primary">Queue Resize</button>
+        </div>
+      </div>
+    </div>
+    <div id="move-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="move-title">
+      <div class="modal-panel">
+        <div class="modal-header">
+          <div>
+            <h3 id="move-title" class="font-headline-md text-[18px] text-on-surface">
+              Move Partition
+            </h3>
+            <p class="text-[12px] text-on-surface-variant">
+              Drag the slider to move the partition left or right.
+            </p>
+          </div>
+          <button id="move-close" class="icon-button" aria-label="Close move dialog">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <div class="text-[12px] font-semibold text-on-surface-variant">Layout Preview:</div>
+          <div id="move-layout-preview" class="flex gap-1.5 h-14 w-full border border-outline-variant rounded-xl p-1 bg-surface-container-low overflow-hidden">
+            <div id="move-block-before" class="stripes-bg text-on-surface-variant flex flex-col items-center justify-center rounded-lg text-[10px] font-label-mono text-center overflow-hidden border border-dashed border-outline-variant select-none transition-all">
+              <div>Space Before</div>
+              <div id="move-block-before-size" class="font-bold">0.00 GB</div>
+            </div>
+            <div id="move-block-part" class="flex flex-col items-center justify-center rounded-lg text-[11px] font-semibold text-center overflow-hidden shadow-sm border border-outline cursor-grab active:cursor-grabbing select-none transition-all">
+              <div id="move-block-part-label">Partition</div>
+              <div id="move-block-part-size" class="font-bold">0.00 GB</div>
+            </div>
+            <div id="move-block-after" class="stripes-bg text-on-surface-variant flex flex-col items-center justify-center rounded-lg text-[10px] font-label-mono text-center overflow-hidden border border-dashed border-outline-variant select-none transition-all">
+              <div>Space After</div>
+              <div id="move-block-after-size" class="font-bold">0.00 GB</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="resize-grid">
+          <div class="resize-row">
+            <div class="resize-label">Shift Position</div>
+            <div class="resize-value">
+              <span id="move-shift-value" class="font-bold">0.00 GB</span>
+            </div>
+          </div>
+          <input id="move-slider" class="resize-range" type="range" min="0" max="0" step="0.001" value="0" />
+
+          <div class="resize-meta">
+            <div>Space Before: <span id="move-before-size">-</span></div>
+            <div>Space After: <span id="move-after-size">-</span></div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="move-cancel" class="btn-secondary">Cancel</button>
+          <button id="move-apply" class="btn-primary">Queue Move</button>
+        </div>
+      </div>
+    </div>
+    <div id="create-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="create-title">
+      <div class="modal-panel">
+        <div class="modal-header">
+          <div>
+            <h3 id="create-title" class="font-headline-md text-[18px] text-on-surface">
+              New Partition
+            </h3>
+            <p class="text-[12px] text-on-surface-variant">
+              Choose the unallocated space, file system, drive letter, and size.
+            </p>
+          </div>
+          <button id="create-close" class="icon-button" aria-label="Close create dialog">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+
+        <div class="resize-grid">
+          <label class="resize-row" for="create-target">
+            <span class="resize-label">Unallocated space</span>
+          </label>
+          <select id="create-target" class="resize-range"></select>
+
+          <label class="resize-row" for="create-fs">
+            <span class="resize-label">File system</span>
+          </label>
+          <select id="create-fs" class="resize-range">
+            <option value="NTFS">NTFS</option>
+            <option value="exFAT">exFAT</option>
+            <option value="FAT32">FAT32</option>
+          </select>
+
+          <label class="resize-row" for="create-size-range">
+            <span class="resize-label">Size</span>
+          </label>
+          <input id="create-size-range" class="resize-range" type="range" min="0" max="0" step="0.001" value="0" />
+          <input id="create-size-input" class="resize-range" type="number" min="0" step="0.001" placeholder="Enter size (e.g. 0.016 for 16MB)" />
+
+          <label class="resize-row" for="create-label-select">
+            <span class="resize-label">Drive letter</span>
+          </label>
+          <select id="create-label-select" class="resize-range"></select>
+          <input id="create-label-custom" class="resize-range hidden" type="text" placeholder="Custom letter (A-Z)" />
+
+          <div class="resize-meta">
+            <div>Selected space: <span id="create-space-size">-</span></div>
+            <div>Available spaces: <span id="create-space-count">0</span></div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="create-cancel" class="btn-secondary">Cancel</button>
+          <button id="create-queue" class="btn-primary">Queue Create</button>
+        </div>
+      </div>
+    </div>
+    <div id="info-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="info-title">
+      <div class="modal-panel">
+        <div class="modal-header">
+          <div>
+            <h3 id="info-title" class="font-headline-md text-[18px] text-on-surface">Info</h3>
+            <p id="info-subtitle" class="text-[12px] text-on-surface-variant">Details</p>
+          </div>
+          <button id="info-close" class="icon-button" aria-label="Close dialog">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+        <div id="info-body" class="info-body"></div>
+        <div class="modal-actions">
+          <button id="info-cancel" class="btn-secondary hidden">Cancel</button>
+          <button id="info-dismiss" class="btn-primary">OK</button>
+        </div>
+      </div>
+    </div>
+    <div id="apply-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="apply-title">
+      <div class="modal-panel">
+        <div class="modal-header">
+          <div>
+            <h3 id="apply-title" class="font-headline-md text-[18px] text-on-surface">
+              Apply Changes
+            </h3>
+            <p id="apply-status" class="text-[12px] text-on-surface-variant">
+              Preparing...
+            </p>
+          </div>
+          <button id="apply-close" class="icon-button" aria-label="Close apply dialog">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+
+        <div class="progress-bar">
+          <div id="apply-progress-fill" class="progress-fill"></div>
+        </div>
+        <div class="progress-meta">
+          <span id="apply-percent">0%</span>
+          <span id="apply-count">0/0</span>
+        </div>
+
+        <!-- Tabs Header -->
+        <div class="flex border-b border-outline-variant gap-4 mb-1">
+          <button id="tab-apply-ops" class="font-label-md font-semibold text-primary border-b-2 border-primary pb-2 flex items-center gap-1.5 active:scale-95 transition-all focus:outline-none">
+            Logs <span id="badge-apply-ops" class="hidden text-[10px] bg-primary text-on-primary px-1.5 py-0.5 rounded-full font-bold">0</span>
+          </button>
+          <button id="tab-apply-warnings" class="font-label-md font-semibold text-outline hover:text-on-surface pb-2 flex items-center gap-1.5 active:scale-95 transition-all focus:outline-none">
+            Warnings <span id="badge-apply-warnings" class="hidden text-[10px] bg-tertiary-container text-on-tertiary-container px-1.5 py-0.5 rounded-full font-bold">0</span>
+          </button>
+          <button id="tab-apply-errors" class="font-label-md font-semibold text-outline hover:text-on-surface pb-2 flex items-center gap-1.5 active:scale-95 transition-all focus:outline-none">
+            Errors <span id="badge-apply-errors" class="hidden text-[10px] bg-error text-on-error px-1.5 py-0.5 rounded-full font-bold">0</span>
+          </button>
+        </div>
+
+        <!-- Panels -->
+        <div id="panel-apply-ops" class="apply-log">
+          <div id="apply-log-ops-empty" class="text-[12px] text-outline-variant">No operation output yet.</div>
+        </div>
+        <div id="panel-apply-warnings" class="apply-log hidden">
+          <div id="apply-log-warnings-empty" class="text-[12px] text-outline-variant">No warnings.</div>
+        </div>
+        <div id="panel-apply-errors" class="apply-log hidden">
+          <div id="apply-log-errors-empty" class="text-[12px] text-outline-variant">No errors.</div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="apply-copy-logs" class="btn-secondary" disabled>Copy Logs</button>
+          <button id="apply-dismiss" class="btn-secondary">Close</button>
+        </div>
+      </div>
+    </div>
+    <script src="./app.js" defer></script>
+  </body>
+</html>

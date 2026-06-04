@@ -1,0 +1,8 @@
+/target
+/crates/*/target
+/src-tauri/target
+/node_modules
+/ui/dist
+*.log
+package.json
+package-lock.json

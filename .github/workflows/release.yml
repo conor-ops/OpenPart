@@ -1,0 +1,126 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g. 0.2.0). Leave empty to use version from Cargo.toml.'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: '. -> target'
+
+      - name: Determine version
+        id: version
+        shell: pwsh
+        run: |
+          if ("${{ github.event.inputs.version }}" -ne "") {
+            $v = "${{ github.event.inputs.version }}"
+          } else {
+            # Read version from tauri.conf.json
+            $conf = Get-Content "src-tauri\tauri.conf.json" | ConvertFrom-Json
+            $v = $conf.package.version
+          }
+          # Normalize: strip leading 'v' if present
+          $v = $v -replace '^v', ''
+          $tag = "v$v"
+          echo "version=$v" >> $env:GITHUB_OUTPUT
+          echo "tag=$tag" >> $env:GITHUB_OUTPUT
+          echo "Resolved version: $v  tag: $tag"
+
+      - name: Check tag does not already exist
+        shell: pwsh
+        run: |
+          $tag = "${{ steps.version.outputs.tag }}"
+          $exists = git tag --list $tag
+          if ($exists) {
+            echo "Tag $tag already exists — skipping release."
+            echo "SKIP=true" >> $env:GITHUB_ENV
+          } else {
+            echo "SKIP=false" >> $env:GITHUB_ENV
+          }
+
+      - name: Build release
+        if: env.SKIP == 'false'
+        run: cargo build --workspace --release
+
+      - name: Install Inno Setup
+        if: env.SKIP == 'false'
+        run: choco install innosetup -y
+
+      - name: Package release
+        if: env.SKIP == 'false'
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.version }}"
+          $tag = "${{ steps.version.outputs.tag }}"
+          $outDir = "OpenPart-$tag-windows"
+          New-Item -ItemType Directory -Path $outDir -Force | Out-Null
+
+          # Executables
+          Copy-Item "target\release\openpart-gui.exe" "$outDir\OpenPart.exe"
+          Copy-Item "target\release\openpart.exe"     "$outDir\OpenPartCLI.exe" -ErrorAction SilentlyContinue
+
+          # UI assets
+          Copy-Item -Recurse "ui"    "$outDir\ui"
+          Copy-Item -Recurse "icons" "$outDir\icons"
+
+          # License and readme
+          Copy-Item "README.md"      "$outDir\" -ErrorAction SilentlyContinue
+          Copy-Item "LICENSE"        "$outDir\" -ErrorAction SilentlyContinue
+
+          # ZIP
+          Compress-Archive -Path "$outDir\*" -DestinationPath "$outDir.zip" -Force
+          echo "ARTIFACT=$outDir.zip" >> $env:GITHUB_ENV
+
+      - name: Build Inno Setup Installer
+        if: env.SKIP == 'false'
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.version }}"
+          & "C:\Program Files (x86)\Inno Setup 6\iscc.exe" /DAppVersion=$version installer/openpart.iss
+
+      - name: Create tag
+        if: env.SKIP == 'false'
+        shell: pwsh
+        run: |
+          $tag = "${{ steps.version.outputs.tag }}"
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a $tag -m "Release $tag"
+          git push origin $tag
+
+      - name: Create GitHub Release
+        if: env.SKIP == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: OpenPart ${{ steps.version.outputs.tag }}
+          files: |
+            ${{ env.ARTIFACT }}
+            OpenPartSetup.exe
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(steps.version.outputs.version, '-') }}

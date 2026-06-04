@@ -1,0 +1,6 @@
+[alias]
+gui = "run -- gui"
+cli = "run -- cli --"
+service = "run -- service"
+daemon = "run -- daemon"
+tests = "run -- tests"

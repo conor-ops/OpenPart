@@ -1,0 +1,24 @@
+[package]
+name = "openpart"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+repository = "https://github.com/mahmadabid/OpenPart"
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+openpart-cli = { path = "crates/openpart-cli" }
+openpart-service = { path = "crates/openpart-service" }
+
+[build-dependencies]
+tauri-winres = "0.1"
+
+[workspace]
+members = [
+  "crates/openpart-core",
+  "crates/openpart-cli",
+  "crates/openpart-service",
+  "src-tauri"
+]
+resolver = "2"
