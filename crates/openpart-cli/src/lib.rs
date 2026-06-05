@@ -13,7 +13,7 @@ use std::path::Path;
 #[derive(Parser, Debug)]
 #[command(
     name = "openpart-cli",
-    version = "0.1.0",
+    version = "0.1.1",
     about = "OpenPart CLI (DiskPart-compatible, safety-first)"
 )]
 pub struct Cli {

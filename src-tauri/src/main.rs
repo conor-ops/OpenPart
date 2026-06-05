@@ -13,6 +13,16 @@ use windows_sys::Win32::System::Ioctl::{
 };
 use openpart_service;
 
+fn new_command(program: &str) -> std::process::Command {
+    let mut cmd = std::process::Command::new(program);
+    #[cfg(target_os = "windows")]
+    {
+        use std::os::windows::process::CommandExt;
+        cmd.creation_flags(0x08000000); // CREATE_NO_WINDOW
+    }
+    cmd
+}
+
 #[derive(serde::Deserialize, serde::Serialize, Clone, Debug)]
 pub struct BackupPartition {
     pub partition_number: u32,
@@ -48,7 +58,7 @@ fn parse_disk_number(path: &str) -> Option<u32> {
 
 fn save_layout_backup(disk_number: u32, description: &str) -> Result<(), String> {
     // 1. Query the current partitions
-    let layout_output = std::process::Command::new("powershell")
+    let layout_output = new_command("powershell")
         .args(&[
             "-NoProfile",
             "-NonInteractive",
@@ -96,7 +106,7 @@ fn save_layout_backup(disk_number: u32, description: &str) -> Result<(), String>
     let mut backup_parts = Vec::new();
     for p in parts {
         // Query label and filesystem
-        let vol_output = std::process::Command::new("powershell")
+        let vol_output = new_command("powershell")
             .args(&[
                 "-NoProfile",
                 "-NonInteractive",
@@ -248,7 +258,7 @@ async fn get_backups_command() -> Result<Vec<BackupSnapshot>, String> {
 #[tauri::command]
 async fn restore_layout_command(disk_number: u32, backup_partitions: Vec<BackupPartition>) -> Result<ApplyReport, String> {
     // 1. Get current layout (via powershell, just to check current partitions and letters)
-    let layout_output = std::process::Command::new("powershell")
+    let layout_output = new_command("powershell")
         .args(&[
             "-NoProfile",
             "-NonInteractive",
@@ -558,7 +568,7 @@ async fn restore_layout_command(disk_number: u32, backup_partitions: Vec<BackupP
     if assign_cmds.len() > 2 {
         steps.push("Assigning drive letters and labels...".to_string());
         use std::io::Write;
-        let mut child = std::process::Command::new("powershell")
+        let mut child = new_command("powershell")
             .arg("-NoProfile")
             .arg("-NonInteractive")
             .arg("-ExecutionPolicy")

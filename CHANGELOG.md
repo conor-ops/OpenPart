@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-06-05
+
+### Fixed
+- **CLI Startup & Elevation**: Embedded UAC `requireAdministrator` manifest into both the root wrapper `openpart.exe` (which packages as `OpenPartCLI.exe`) and `openpart-cli` binary. Added executable name detection to forward CLI commands directly when running under a name containing "cli".
+- **Operations Queue**: Enabled queueing resize/move actions on newly created (unapplied/pending) partition segments.
+- **Console Window Flashing**: Conditionally set `CREATE_NO_WINDOW` flags on all spawned background processes (PowerShell, diskpart, format, manage-bde, chkdsk) to prevent empty windows from flashing.
+- **Uninstall Logo**: Configured `UninstallDisplayIcon` in the Inno Setup script to display the application logo next to OpenPart in the Windows Control Panel "Programs and Features" list.
+- **CLI Version Alignment**: Aligned crate and subcommand version metadata to `0.1.1`.
+
 ## [0.1.0] - 2026-06-04
 
 ### Added

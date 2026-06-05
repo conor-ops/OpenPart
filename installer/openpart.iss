@@ -12,6 +12,7 @@ LicenseFile=..\LICENSE
 OutputDir=..\
 OutputBaseFilename=OpenPartSetup
 SetupIconFile=..\src-tauri\icons\icon.ico
+UninstallDisplayIcon={app}\OpenPart.exe
 Compression=lzma
 SolidCompression=yes
 ArchitecturesInstallIn64BitMode=x64

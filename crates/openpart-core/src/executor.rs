@@ -3,6 +3,16 @@ use crate::models::{ApplyReport, Plan};
 use crate::models::PlanAction;
 use std::process::{Command, Stdio};
 use std::io::{Read, Write, Seek, SeekFrom};
+
+fn new_command(program: &str) -> Command {
+    let mut cmd = Command::new(program);
+    #[cfg(target_os = "windows")]
+    {
+        use std::os::windows::process::CommandExt;
+        cmd.creation_flags(0x08000000); // CREATE_NO_WINDOW
+    }
+    cmd
+}
 use std::os::windows::fs::OpenOptionsExt;
 use std::os::windows::io::AsRawHandle;
 use sha2::Digest;
@@ -101,7 +111,7 @@ impl Executor for RealExecutor {
                     "Resize-Partition -DiskNumber {} -PartitionNumber {} -Size {} -ErrorAction Stop",
                     disk_number, resolved.partition_number, target_size_bytes
                 );
-                let resize_output = Command::new("powershell")
+                let resize_output = new_command("powershell")
                     .args(&["-NoProfile", "-NonInteractive", "-Command", &ps_cmd])
                     .output()?;
                 
@@ -299,7 +309,7 @@ impl Executor for RealExecutor {
                 } else {
                     format_args.push("/V:".to_string());
                 }
-                let output = Command::new("C:\\Windows\\System32\\format.com").args(&format_args).output()?;
+                let output = new_command("C:\\Windows\\System32\\format.com").args(&format_args).output()?;
                 if !output.status.success() {
                     return Err(OpenPartError::Io(std::io::Error::new(std::io::ErrorKind::Other, format!("format failed: {}", String::from_utf8_lossy(&output.stderr)))));
                 }
@@ -405,7 +415,7 @@ impl Executor for RealExecutor {
                     } else {
                         args.push("/V:".to_string()); // empty label
                     }
-                    let output = Command::new("C:\\Windows\\System32\\format.com").args(&args).output()?;
+                    let output = new_command("C:\\Windows\\System32\\format.com").args(&args).output()?;
                     if !output.status.success() {
                         return Err(OpenPartError::Io(std::io::Error::new(std::io::ErrorKind::Other, format!("format failed: {}", String::from_utf8_lossy(&output.stderr)))));
                     }
@@ -570,7 +580,7 @@ impl Executor for RealExecutor {
                 if let Some(vol) = get_volume_by_offset(disk_number, old_offset) {
                     let bde_start = std::time::Instant::now();
                     let vol_trimmed = vol.trim_end_matches('\\');
-                    let bl_status = Command::new("manage-bde")
+                    let bl_status = new_command("manage-bde")
                         .args(&["-status", vol_trimmed])
                         .output();
                     steps.push(format!("[PERF ] BitLocker check completed in {:.3} seconds.", bde_start.elapsed().as_secs_f64()));
@@ -953,7 +963,7 @@ impl Executor for RealExecutor {
                 if !vol_trimmed.is_empty() {
                     steps.push("Running chkdsk integrity scan...".to_string());
                     let chkdsk_start = std::time::Instant::now();
-                    let chkdsk_output = Command::new("chkdsk")
+                    let chkdsk_output = new_command("chkdsk")
                         .args(&[&vol_trimmed, "/scan", "/perf"])
                         .output();
                     steps.push(format!("[PERF ] chkdsk /scan /perf completed in {:.3} seconds.", chkdsk_start.elapsed().as_secs_f64()));
@@ -990,7 +1000,7 @@ impl Executor for RealExecutor {
 fn run_diskpart(script: &str, steps: &mut Vec<String>) -> Result<String, std::io::Error> {
     use std::io::{BufRead, BufReader, Write};
     let start_time = std::time::Instant::now();
-    let mut child = Command::new("diskpart")
+    let mut child = new_command("diskpart")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())

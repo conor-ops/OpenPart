@@ -1818,11 +1818,7 @@
     const segment = state.segments[segmentIndex];
     if (!segment) return;
 
-    if (segment.status && segment.status.toLowerCase() === "pending") {
-      openInfoModal("Resize", ["Apply the pending create before resizing this partition."]);
-      return;
-    }
-    
+
     const target = segment.letter || (segment.index !== undefined && segment.index !== null ? `${segment.index}` : null);
     if (!target) {
       openInfoModal("Resize", ["Unable to resolve a resize target for this partition."]);
@@ -2026,11 +2022,6 @@
     const segmentIndex = findIndex(moveState.segmentId);
     const segment = state.segments[segmentIndex];
     if (!segment) return;
-
-    if (segment.status && segment.status.toLowerCase() === "pending") {
-      openInfoModal("Move", ["Apply the pending create before moving this partition."]);
-      return;
-    }
 
     const target = segment.letter || (segment.index !== undefined && segment.index !== null ? `${segment.index}` : null);
     if (!target) {
